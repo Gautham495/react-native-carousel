@@ -1,112 +1,80 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState, useRef} from 'react';
+import {Text, View, Dimensions, Image} from 'react-native';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export const SLIDER_WIDTH = Dimensions.get('window').width + 30;
+export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const data = [
+  {
+    id: 1,
+    name: 'React JS',
+    url: 'https://icon-library.com/images/react-icon/react-icon-29.jpg',
+  },
+  {
+    id: 2,
+    name: 'JavaScript',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Javascript_Logo.png',
+  },
+  {
+    id: 3,
+    name: 'Node JS',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/NodeJS.png',
+  },
+];
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+const renderItem = ({item}) => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
+    <View
+      style={{
+        borderWidth: 1,
+        padding: 20,
+        borderRadius: 20,
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}>
+      <Image source={{uri: item.url}} style={{width: 200, height: 200}} />
+      <Text style={{marginVertical: 10, fontSize: 20, fontWeight: 'bold'}}>
+        {item.name}
       </Text>
     </View>
   );
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+const App = () => {
+  const [index, setIndex] = useState(0);
+  const isCarousel = useRef(null);
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View style={{marginVertical: 10}}>
+      <Carousel
+        ref={isCarousel}
+        data={data}
+        renderItem={renderItem}
+        sliderWidth={SLIDER_WIDTH}
+        itemWidth={ITEM_WIDTH}
+        onSnapToItem={index => setIndex(index)}
+      />
+      <Pagination
+        dotsLength={data.length}
+        activeDotIndex={index}
+        carouselRef={isCarousel}
+        dotStyle={{
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          marginHorizontal: 8,
+          backgroundColor: '#F4BB41',
+        }}
+        tappableDots={true}
+        inactiveDotStyle={{
+          backgroundColor: 'black',
+          // Define styles for inactive dots here
+        }}
+        inactiveDotOpacity={0.4}
+        inactiveDotScale={0.6}
+      />
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
